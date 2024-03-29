@@ -65,7 +65,7 @@ function App() {
 
   const onSubmit: SubmitHandler<Input> = (data) => {
     if (currentAction.input.includes(data.userInput)) {
-      if (points !== 0 && points % 4 === 0) {
+      if (points !== 0 && points === listLevel[level - 1].points) {
         setResult(Result.NEXT_LEVEL);
         setLevel(level + 1);
       } else {
