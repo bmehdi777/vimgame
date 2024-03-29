@@ -21,24 +21,24 @@ interface Input {
 }
 
 const listAction: Action[] = [
-  { level: 1, title: "Save", input: [":w"] },
-  { level: 1, title: "Save and close", input: [":wq", ":x"] },
-  { level: 1, title: "Save all", input: [":wa"] },
-  { level: 1, title: "Save and close all", input: [":wqa", ":xa"] },
-  { level: 2, title: "Append", input: ["a"] },
-  { level: 2, title: "Insert", input: ["i"] },
-  { level: 2, title: "End of line", input: ["$"] },
-  { level: 2, title: "Up", input: ["k"] },
-  { level: 3, title: "Down", input: ["j"] },
-  { level: 3, title: "Left", input: ["h"] },
-  { level: 3, title: "Right", input: ["l"] },
-  { level: 4, title: "End of word", input: ["e"] },
-  { level: 5, title: "Start of word", input: ["b"] },
-  { level: 6, title: "Append end of line", input: ["$a", "A"] },
+  { level: 0, title: "Save", input: [":w"] },
+  { level: 0, title: "Save and close", input: [":wq", ":x"] },
+  { level: 0, title: "Save all", input: [":wa"] },
+  { level: 0, title: "Save and close all", input: [":wqa", ":xa"] },
+  { level: 1, title: "Append", input: ["a"] },
+  { level: 1, title: "Insert", input: ["i"] },
+  { level: 1, title: "End of line", input: ["$"] },
+  { level: 1, title: "Up", input: ["k"] },
+  { level: 2, title: "Down", input: ["j"] },
+  { level: 2, title: "Left", input: ["h"] },
+  { level: 2, title: "Right", input: ["l"] },
+  { level: 3, title: "End of word", input: ["e"] },
+  { level: 4, title: "Start of word", input: ["b"] },
+  { level: 5, title: "Append end of line", input: ["$a", "A"] },
 ];
 
 const listLevel: Level[] = [
-  { name: "Novice", points: 4 },
+  { name: "Novice", points: -1 },
   { name: "Apprentice", points: 9 },
   { name: "Journeyman", points: 16 },
   { name: "Expert", points: 31 },
@@ -54,7 +54,8 @@ const generateRandomAction = (level: number) => {
 };
 
 function App() {
-  const [level, setLevel] = useState<number>(1);
+	const MAX_POINTS = 91;
+  const [level, setLevel] = useState<number>(0);
   const [currentAction, setCurrentAction] = useState<Action>(
     generateRandomAction(level)
   );
@@ -65,14 +66,16 @@ function App() {
 
   const onSubmit: SubmitHandler<Input> = (data) => {
     if (currentAction.input.includes(data.userInput)) {
-      if (points !== 0 && points === listLevel[level - 1].points) {
+			let nextLevel = level; 
+      if (points <= MAX_POINTS && points === listLevel[level + 1].points) {
+				nextLevel += 1;
         setResult(Result.NEXT_LEVEL);
-        setLevel(level + 1);
+        setLevel(nextLevel);
       } else {
         setResult(Result.WIN);
       }
       setTimeout(() => {
-        const random = generateRandomAction(level);
+        const random = generateRandomAction(nextLevel);
         setCurrentAction(random);
         setResult(undefined);
         resetField("userInput");
@@ -81,13 +84,13 @@ function App() {
     } else {
       setResult(Result.LOOSE);
       setPoints(0);
-      setLevel(1);
+      setLevel(0);
     }
   };
 
   return (
     <>
-      <p>Level: {listLevel[level - 1].name}</p>
+      <p>Level: {listLevel[level].name}</p>
       <p>Streak: {points}</p>
       {currentAction.title}
       <form onSubmit={handleSubmit(onSubmit)}>
