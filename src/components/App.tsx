@@ -50,7 +50,7 @@ const generateRandomAction = (level: number) => {
   const listByLevel = listAction.filter((action) => action.level === level);
   const numActions = listByLevel.length;
   const selected = Math.floor(Math.random() * numActions);
-  return listAction[selected];
+  return listByLevel[selected];
 };
 
 function App() {
